@@ -6,7 +6,7 @@ A little unobtrusive binding provider for knockout2.0.
 Usage
 -----
 
-The binding provider will look for bindings on any element that has a class prefixed with ko-
+The binding provider will look for bindings on any element that has a class prefixed with 'ko-'.
 Of course this should be configurable, but I'll fix that up shortly. 
 
 As it stand the library will automatically set itself as the bindingProvider instance, 
