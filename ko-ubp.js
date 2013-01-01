@@ -1,14 +1,29 @@
+/** 
+   Virtual element support has been taken from knockout. 
+   https://github.com/SteveSanderson/knockout/blob/master/src/virtualElements.js
+*/
 (function (ko, $) {
     var bindings,
-        reBindingClassPrefix = /(?:^|\s)ko-/;
+        reBindingClassPrefix = /(?:^|\s)ko-/,
+        commentNodesHaveTextProperty = document.createComment("test").text === "<!--test-->",
+        startCommentRegex = commentNodesHaveTextProperty ? /^<!--\s*ko\s+ko:\s+(.*)\s*-->$/ : /^\s*ko\s+ko:\s+(.*)\s*$/;
 
-    function hasBindings(node) {
-        return node.className && !!node.className.match(reBindingClassPrefix);
+    function virtualNodeBindingClasses(node) {
+        var match = (commentNodesHaveTextProperty ? node.text : node.nodeValue).match(startCommentRegex);
+
+        return match ? match[1] : null;
     }
 
-    function getBindings(node, bindingContext) {
-        var nodeBindings = {},
-            $node = $(node);
+    function hasBindings(node) {
+        switch (node.nodeType) {
+            case 1: return node.className && !!node.className.match(reBindingClassPrefix); // Element
+            case 8: return virtualNodeBindingClasses(node) !== null;
+            default: return false;
+        }
+    }
+
+    function getBindingsForElement($node, bindingContext) {
+        var nodeBindings = {};
 
         $.each(bindings, function (selector, binding) {
             if ($node.is(selector)) {
@@ -18,6 +33,20 @@
         });
 
         return nodeBindings;
+    }
+
+    function getBindingsForComment(bindingClasses, bindingContext) {
+        var $worker = $('<div />').addClass(bindingClasses);
+
+        return getBindingsForElement($worker, bindingContext);
+    }
+
+    function getBindings(node, bindingContext) {
+        switch (node.nodeType) {
+            case 1: return getBindingsForElement($(node), bindingContext);
+            case 8: return getBindingsForComment(virtualNodeBindingClasses(node), bindingContext);
+            default: return null;
+        }
     }
 
     function setBindings(b) { bindings = b; }
