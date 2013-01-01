@@ -12,7 +12,7 @@
 
         $.each(bindings, function (selector, binding) {
             if ($node.is(selector)) {
-                if ($.isFunction(binding)) binding = binding.call(bindingContext.$data);
+                if ($.isFunction(binding)) binding = binding.call(bindingContext.$data, bindingContext.$parent);
                 nodeBindings = $.extend(nodeBindings, binding);
             }
         });
