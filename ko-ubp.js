@@ -27,7 +27,7 @@
 
         $.each(bindings, function (selector, binding) {
             if ($node.is(selector)) {
-                if ($.isFunction(binding)) binding = binding.call(bindingContext.$data, bindingContext.$parent);
+                if ($.isFunction(binding)) binding = binding.call(bindingContext.$data, bindingContext.$parent, bindingContext.$parents, bindingContext.$index);
                 nodeBindings = $.extend(nodeBindings, binding);
             }
         });
