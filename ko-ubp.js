@@ -16,7 +16,7 @@
 
     function hasBindings(node) {
         switch (node.nodeType) {
-            case 1: return node.className && !!node.className.match(reBindingClassPrefix); // Element
+            case 1: return node.className && node.className.match && !!node.className.match(reBindingClassPrefix); // Element
             case 8: return virtualNodeBindingClasses(node) !== null;
             default: return false;
         }
